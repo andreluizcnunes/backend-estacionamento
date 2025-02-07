@@ -23,14 +23,23 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public Usuario buscarPorId(UUID id) {
         return usuarioRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado")
+                () -> new RuntimeException("Usuário não encontrado.")
         );
     }
 
     @Transactional
-    public Usuario editarSenha(UUID id, String password) {
+    public Usuario editarSenha(UUID id, String currentPassword, String newPassword, String confirmPassword) {
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException("As senhas não conferem.");
+        }
+
         Usuario user = buscarPorId(id);
-        user.setPassword(password);
+        if (!user.getPassword().equals(currentPassword)) {
+            throw new RuntimeException("Senha atual incorreta.");
+        }
+
+        user.setPassword(newPassword);
         return user;
     }
 

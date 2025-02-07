@@ -30,7 +30,7 @@ public class Usuario implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 25, nullable = false)
-    private Role role;
+    private Role role = Role.ROLE_CLIENTE;
 
     // atributos para auditoria
     @Column(name = "created_at")
