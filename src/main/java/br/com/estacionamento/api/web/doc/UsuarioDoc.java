@@ -133,6 +133,14 @@ public interface UsuarioDoc {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorResponse.class)
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Campos invalidos ou mal formatados.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
                     )
             }
     )

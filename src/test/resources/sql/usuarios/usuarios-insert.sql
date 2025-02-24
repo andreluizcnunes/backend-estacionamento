@@ -1,0 +1,3 @@
+insert into usuarios (id, username, password, role) values ('4004ab6e-b3c5-4c87-95d2-382ed57fa552', 'ana@email.com', '123456', 'ROLE_ADMIN');
+insert into usuarios (id, username, password, role) values ('4004ab6e-b3c5-4c87-95d2-382ed57fa553', 'bia@email.com', '123456', 'ROLE_CLIENTE');
+insert into usuarios (id, username, password, role) values ('4004ab6e-b3c5-4c87-95d2-382ed57fa554', 'bob@email.com', '123456', 'ROLE_CLIENTE');

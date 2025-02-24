@@ -19,62 +19,62 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(PasswordMismatchException.class)
-    public ResponseEntity<ErroMessage> passwordMismatchException(
+    public ResponseEntity<ErrorMessage> passwordMismatchException(
             RuntimeException ex, HttpServletRequest request
     ) {
         log.error("Api Erro: ", ex);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErroMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
 
     }
 
     @ExceptionHandler(InvalidCurrentPasswordException.class)
-    public ResponseEntity<ErroMessage> InvalidCurrentPasswordException(
+    public ResponseEntity<ErrorMessage> InvalidCurrentPasswordException(
             RuntimeException ex, HttpServletRequest request
     ) {
         log.error("Api Erro: ", ex);
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErroMessage(request, HttpStatus.UNAUTHORIZED, ex.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.UNAUTHORIZED, ex.getMessage()));
 
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErroMessage> entityNotFoundExcpetion(
+    public ResponseEntity<ErrorMessage> entityNotFoundExcpetion(
             RuntimeException ex, HttpServletRequest request
     ) {
         log.error("Api Erro: ", ex);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErroMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
 
     }
 
     @ExceptionHandler(UsernameUniqueViolationException.class)
-    public ResponseEntity<ErroMessage> uniqueViolationException(
+    public ResponseEntity<ErrorMessage> uniqueViolationException(
             RuntimeException ex, HttpServletRequest request
     ) {
         log.error("Api Erro: ", ex);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErroMessage(request, HttpStatus.CONFLICT, ex.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.CONFLICT, ex.getMessage()));
 
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErroMessage> methodArgumentNotValidException(
+    public ResponseEntity<ErrorMessage> methodArgumentNotValidException(
             MethodArgumentNotValidException ex, HttpServletRequest request, BindingResult result
     ) {
         log.error("Api Erro: ", ex);
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErroMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Campo(s) invalido(s).", result));
+                .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Campo(s) invalido(s).", result));
 
     }
 }

@@ -2,7 +2,6 @@ package br.com.estacionamento.api.service;
 
 import br.com.estacionamento.api.entity.Usuario;
 import br.com.estacionamento.api.exception.EntityNotFoundException;
-import br.com.estacionamento.api.exception.InvalidCurrentPasswordException;
 import br.com.estacionamento.api.exception.PasswordMismatchException;
 import br.com.estacionamento.api.exception.UsernameUniqueViolationException;
 import br.com.estacionamento.api.repository.UsuarioRepository;
@@ -49,7 +48,7 @@ public class UsuarioService {
 
         Usuario user = buscarPorId(id);
         if (!user.getPassword().equals(currentPassword)) {
-            throw new InvalidCurrentPasswordException("currentPassword incorreta.");
+            throw new PasswordMismatchException("currentPassword incorreta.");
         }
 
         user.setPassword(newPassword);
