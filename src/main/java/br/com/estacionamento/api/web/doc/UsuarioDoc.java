@@ -109,7 +109,16 @@ public interface UsuarioDoc {
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorResponse.class)
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Campos invalidos ou mal formatados.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
                     )
+
             }
     )
     public ResponseEntity<Void> updatePassword(@PathVariable UUID id, @Valid @RequestBody UsuarioPasswordDto dto);
@@ -129,14 +138,6 @@ public interface UsuarioDoc {
                     @ApiResponse(
                             responseCode = "404",
                             description = "Nenhum usuário encontrado.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "422",
-                            description = "Campos invalidos ou mal formatados.",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorResponse.class)

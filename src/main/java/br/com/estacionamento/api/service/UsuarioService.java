@@ -6,6 +6,8 @@ import br.com.estacionamento.api.exception.PasswordMismatchException;
 import br.com.estacionamento.api.exception.UsernameUniqueViolationException;
 import br.com.estacionamento.api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,17 +19,18 @@ import java.util.UUID;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
 
-        if(usuarioRepository.existsByUsername(usuario.getUsername())){
-            throw new UsernameUniqueViolationException(
-                    String.format("Username '%s' já está cadastrado.", usuario.getUsername())
-            );
+        try {
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            return usuarioRepository.save(usuario);
+        } catch (DataIntegrityViolationException ex) {
+            throw new UsernameUniqueViolationException(String.format("Username '%s' já está cadastrado.", usuario.getUsername()));
         }
 
-        return usuarioRepository.save(usuario);
     }
 
     @Transactional(readOnly = true)
@@ -47,12 +50,26 @@ public class UsuarioService {
         }
 
         Usuario user = buscarPorId(id);
-        if (!user.getPassword().equals(currentPassword)) {
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new PasswordMismatchException("currentPassword incorreta.");
         }
 
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario findByUsername(String username) {
+        return usuarioRepository.findByUsername(username).orElseThrow(
+                () -> new EntityNotFoundException(
+                        String.format("Usuário com username '%s' não encontrado.", username)
+                )
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario.Role findByRoleByUsername(String username) {
+        return usuarioRepository.findByRoleByUsername(username);
     }
 
     @Transactional(readOnly = true)
