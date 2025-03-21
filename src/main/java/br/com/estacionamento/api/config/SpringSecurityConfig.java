@@ -1,5 +1,6 @@
 package br.com.estacionamento.api.config;
 
+import br.com.estacionamento.api.jwt.JwtAuthenticationEntryPoint;
 import br.com.estacionamento.api.jwt.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,9 +32,21 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 antMatcher(HttpMethod.POST, "/api/v1/usuarios"),
-                                antMatcher(HttpMethod.POST, "/api/v1/auth")
+                                antMatcher(HttpMethod.POST, "/api/v1/auth"),
+                                antMatcher("/docs/index.html"),
+                                antMatcher("/doc-estacionamento.html"),
+                                antMatcher("/docs-estacionamento/**"),
+                                antMatcher("/v3/api-docs/**"),
+                                antMatcher("/swagger-ui-custom.html"),
+                                antMatcher("/swagger-ui.html"),
+                                antMatcher("/swagger-ui/**"),
+                                antMatcher("/**.html"),
+                                antMatcher("/webjars/**"),
+                                antMatcher("/configuration/**"),
+                                antMatcher("/swagger-resources/**")
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest()
+                        .authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -41,6 +54,8 @@ public class SpringSecurityConfig {
                 ).addFilterBefore(
                         jwtAuthorizationFilter(),
                         UsernamePasswordAuthenticationFilter.class
+                ).exceptionHandling( ex -> ex
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 ).build();
     }
 

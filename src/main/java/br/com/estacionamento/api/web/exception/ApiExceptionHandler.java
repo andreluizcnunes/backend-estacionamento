@@ -14,9 +14,23 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.channels.AcceptPendingException;
+
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
+    @ExceptionHandler(AcceptPendingException.class)
+    public ResponseEntity<ErrorMessage> acceptPendingException(
+            AcceptPendingException ex, HttpServletRequest request
+    ) {
+        log.error("Api Erro: ", ex);
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
+
+    }
 
     @ExceptionHandler(PasswordMismatchException.class)
     public ResponseEntity<ErrorMessage> passwordMismatchException(

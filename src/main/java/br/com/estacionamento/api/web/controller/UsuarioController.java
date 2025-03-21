@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class UsuarioController implements UsuarioDoc {
 
     @Override
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') OR (hasRole('CLIENTE') AND #id == authentication.principal.id)")
     public ResponseEntity<UsuarioResponseDto> getbayId(@PathVariable UUID id){
         Usuario user = usuarioService.buscarPorId(id);
         return ResponseEntity.ok(UsuarioMapper.toDto(user));
@@ -40,6 +42,7 @@ public class UsuarioController implements UsuarioDoc {
 
     @Override
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE') AND #id == authentication.principal.id")
     public ResponseEntity<Void> updatePassword(@PathVariable UUID id, @Valid @RequestBody UsuarioPasswordDto dto){
         Usuario user = usuarioService.editarSenha(id, dto.getCurrentPassword(), dto.getNewPassword(), dto.getConfirmPassword());
         return ResponseEntity.noContent().build();
@@ -47,6 +50,7 @@ public class UsuarioController implements UsuarioDoc {
 
     @Override
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioResponseDto>> getAll(){
         List<Usuario> users = usuarioService.buscarTodos();
         return ResponseEntity.ok(UsuarioMapper.toListDto(users));

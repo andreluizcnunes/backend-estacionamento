@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -58,8 +59,9 @@ public interface UsuarioDoc {
 
 
     @Operation(
+            security = @SecurityRequirement(name = "security"),
             summary = "Recuperar um usuário por ID",
-            description = "Recuperar um usuário por ID.",
+            description = "Requisição exige um Bear Token válido. Acesso restrito a ADMIN | CLIENTE",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -67,6 +69,14 @@ public interface UsuarioDoc {
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = UsuarioResponseDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Usuário sem permissão para acessar este recurso.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
                             )
                     ),
                     @ApiResponse(
@@ -83,8 +93,9 @@ public interface UsuarioDoc {
 
 
     @Operation(
+            security = @SecurityRequirement(name = "security"),
             summary = "Atualizar a senha.",
-            description = "Atualizar a senha.",
+            description = "Requisição exige um Bear Token válido. Acesso restrito a ADMIN | CLIENTE",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
@@ -94,14 +105,7 @@ public interface UsuarioDoc {
                                     schema = @Schema(implementation = Void.class)
                             )
                     ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Recurso não encontrado.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class)
-                            )
-                    ),
+
                     @ApiResponse(
                             responseCode = "400",
                             description = "Senha não confere",
@@ -110,6 +114,24 @@ public interface UsuarioDoc {
                                     schema = @Schema(implementation = ErrorResponse.class)
                             )
                     ),
+
+                    @ApiResponse(
+                    responseCode = "403",
+                    description = "Usuário sem permissão para acessar este recurso.",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = ErrorResponse.class)
+                        )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Recurso não encontrado.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+
                     @ApiResponse(
                             responseCode = "422",
                             description = "Campos invalidos ou mal formatados.",
@@ -124,8 +146,9 @@ public interface UsuarioDoc {
     public ResponseEntity<Void> updatePassword(@PathVariable UUID id, @Valid @RequestBody UsuarioPasswordDto dto);
 
     @Operation(
+            security = @SecurityRequirement(name = "security"),
             summary = "Lista todos os usuários.",
-            description = "Lista todos os usuários cadastrados no sistema.",
+            description = "Requisição exige um Bear Token válido. Acesso restrito a ADMIN",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -133,6 +156,14 @@ public interface UsuarioDoc {
                             content = @Content(
                                     mediaType = "application/json",
                                     array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDto.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Usuário sem permissão para acessar este recurso.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
                             )
                     ),
                     @ApiResponse(

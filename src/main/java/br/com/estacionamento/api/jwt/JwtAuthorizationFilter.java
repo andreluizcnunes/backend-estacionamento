@@ -27,26 +27,35 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        final String token = request.getHeader(JwtUtils.JWT_AUTHORIZATION);
+        String requestURI = request.getRequestURI();
 
-        if(token == null || !token.startsWith(JwtUtils.JWT_BEARER)){
-            log.info("JWT Token está nulo, vazio ou não começa com Bearer");
+        if (requestURI.startsWith("/v3/api-docs") || requestURI.startsWith("/swagger-ui") ||
+                requestURI.startsWith("/swagger-resources") || requestURI.startsWith("/webjars") ||
+                requestURI.startsWith("/docs") || requestURI.endsWith(".html")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        if(!JwtUtils.isValidToken(token)){
-            log.warn("JWT Token está inválido ou expirado.");
+        final String token = request.getHeader(JwtUtils.JWT_AUTHORIZATION);
+
+        if (token == null || !token.startsWith(JwtUtils.JWT_BEARER)) {
+            log.debug("JWT Token ausente ou mal formatado para URI: {}", requestURI);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (!JwtUtils.isValidToken(token)) {
+            log.warn("JWT Token inválido ou expirado para URI: {}", requestURI);
             filterChain.doFilter(request, response);
             return;
         }
 
         String username = JwtUtils.getUsernameFromToken(token);
-
         toAuthentication(request, username);
 
         filterChain.doFilter(request, response);
     }
+
 
     private void toAuthentication(HttpServletRequest request, String username){
         UserDetails userDetails = detailsService.loadUserByUsername(username);
